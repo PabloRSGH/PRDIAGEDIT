@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="PABLO RIVERA SÁNCHEZ">
+    <title>Editor de diagramas de flujo - ETS</title>
+    <script>
+        //funcion para cargar
+        function cargactxCanvas(idCanvas) {
+            var elemento = document.getElementById(idCanvas);
+            if (elemento && elemento.getContext) {
+                var ctx = elemento.getContext('2d');
+                if (ctx) {
+                    return ctx;
+                }
+            }
+            return FALSE;
+        }
+
+        var color = 0; //indice de color de relleno
+        var colorBorde = 0; // indice de color de borde
+        var _x; //coordenada para colocar elemento
+        var _y; //coordenada para colocar elemento
+        var enLineaX = 0; // conteo de elementos sobre x
+        var enLineaY = 0; //conteo de elementos sobre y
+        var tipo = 0; // indice de tipo de elemento
+        var espacio = 20; // espacio entre elementos
+        var alto = 55; //altura de los elementos
+        var ancho = 120; // ancho de los elementos
+        var opcionSi = 0; // bandera de la opcion de condicion
+        var opcionNo = 0; // bandera de la opcion de la condicion
+        var texto = ""; // texto que se ingresa a cada elemento
+        var linea = [100]; //arreglo para las lineas de código
+        linea[0] = "1"; //linea 1
+        linea[1] = "2"; //.
+        linea[2] = "3"; //.
+        linea[3] = "4"; //.
+        linea[4] = "5";
+        linea[5] = "6";
+        linea[6] = "7";
+        linea[7] = "8";
+        linea[8] = "9";
+        linea[9] = "10";
+        linea[10] = "11";
+        linea[11] = "12"; //.linea 12
+        linea[12] = "13"; //.linea 12
+        linea[13] = "14"; //.linea 12
+        linea[14] = "15"; //.linea 12
+        linea[15] = "16"; //.linea 12
+        var i = 0; //variable para conteo de lineas
+
+        
+        //funcion que asigna las coordenadas de los elementos
+        function asignaPosicion() {
+            if (tipo == 0) { //tipo 0 es inicio
+                _x = 380;
+                _y = 20;
+                enLineaX++;
+            }
+            if (tipo == 1) { //tipo 1 es variable
+                _x = 380;
+                _y += 75;
+                enLineaX++;
+            }
+            if (tipo == 2) { //tipo 2 es condicion
+                _x = 380;
+                _y += 75;
+                enLineaX++;
+            }
+            if (tipo == 3) { //tipo 3 es instruccion
+                _x = 380;
+                _y += 75;
+                enLineaX++;
+            }
+            if (tipo == 4) { //tipo 4 es entrada
+                _x = 380;
+                _y += 75;
+                enLineaX++;
+            }
+            if (tipo == 5) { // tipo 5 es salida
+                _x = 380;
+                _y += 75;
+                enLineaX++;
+            }
+            if (tipo == 6) { //tipo 6 es fin
+                _x = 380;
+                _y += 75;
+                enLineaX++;
+            }
+
+
+        }
+
+        //funcion que inserta el elemento inicial
+
+        function inicio() {
+            tipo = 0;
+            asignaPosicion();
+
+            rectanguloRedondeado(_x, _y + 29, 120, 25, 5, "INICIO")
+            document.getElementById('l1').innerHTML = "#include &lt;stdio.h&gt;";
+            document.getElementById('l2').innerHTML = "#include &lt;stdlib.h&gt;";
+            document.getElementById('l3').innerHTML = "int main(){";
+            document.getElementById('l4').innerHTML = "return 0;";
+            document.getElementById('l5').innerHTML = "}";
+
+        }
+
+        //funcion que inserta el elemento de variable
+        function definirVariable() {
+            tipo = 1;
+            asignaPosicion();
+            texto = prompt('Defina la variable \nEjemplo:\nint i = 0')
+            document.getElementById(linea[i]).innerHTML = texto + "\;";
+            i++;
+            cuadroVariable(_x, _y, ancho, alto, texto)
+            colocarFlecha(_x, _y, ancho)
+        }
+
+        //funcion que inserta el elemento condición
+        function definirCondicion() {
+            tipo = 2;
+            opcionSi = 1;
+            opcionNo = 1;
+            asignaPosicion();
+            texto = prompt('Defina la condición \nEjemplo:\ni < 10')
+            document.getElementById(linea[i]).innerHTML = "if(" + texto + "){\n";
+            i++;
+            romboCondición(_x, _y, ancho, alto);
+            colocarFlecha(_x, _y, ancho);
+            dibujarOpciones(_x, _y, ancho, alto);
+
+        }
+
+        //funcion para insertar instrucción
+        function definirInstruccion() {
+            tipo = 3;
+            asignaPosicion();
+            texto = prompt('Defina la intruccion \nEjemplo:\na + b')
+            document.getElementById(linea[i]).innerHTML = texto + ";\n";
+            i++;
+            if (opcionSi == 1 || opcionNo) {
+                if (opcionSi == 1) {
+                    rectangulo(_x, _y, ancho, alto, texto);
+                    colocarFlecha(_x, _y, ancho);
+                    opcionSi = 0;
+                } else if (opcionNo == 1) {
+                    _y -= 75;
+                    rectangulo(_x + ancho + espacio, _y, ancho, alto, texto);
+                    colocarFlecha(_x + ancho + espacio, _y, ancho);
+                    opcionNo = 0;
+
+                } else {
+                    rectangulo(_x, _y, ancho, alto, texto);
+                    colocarFlecha(_x, _y, ancho);
+                }
+
+            } else {
+                rectangulo(_x, _y, ancho, alto, texto);
+                colocarFlecha(_x, _y, ancho);
+            }
+        }
+
+        //funcion para insertar la entrada o mensaje 
+        function definirEntrada() {
+            if (tipo == 5) {
+                tipo = 4;
+                asignaPosicion();
+                var textoAnterior = texto;
+                texto = prompt('Defina el mensaje que se mostrará \nEjemplo:\nIngresa el valor para "a":')
+                document.getElementById(linea[i]).innerHTML = "printf(\"" + texto + "\%d\"," + textoAnterior + ");\n";
+                i++;
+                cuadroEntrada(_x, _y, ancho, alto, texto)
+                colocarFlecha(_x, _y, ancho);
+            } else {
+
+                tipo = 4;
+                asignaPosicion();
+                texto = prompt('Defina el mensaje que se mostrará \nEjemplo:\nIngresa el valor para "a":')
+                document.getElementById(linea[i]).innerHTML = "printf(\"" + texto + "\");\n";
+                i++;
+                cuadroEntrada(_x, _y, ancho, alto, texto)
+                colocarFlecha(_x, _y, ancho);
+            }
+        }
+        //funcion para insertar o asignar un valor a variable
+        function definirSalida() {
+            tipo = 5;
+            asignaPosicion();
+
+            texto = prompt('Especifique la variable donde se guardará el valor\nEjemplo:\n "a":')
+            document.getElementById(linea[i]).innerHTML = "scanf(\"\%d\",&" + texto + ");\n";
+            i++;
+            cuadroSalida(_x, _y, ancho, alto, texto);
+            colocarFlecha(_x, _y, ancho);
+            //textoSalida();
+        }
+
+        //funcion que inserta el elemento final
+        function fin() {
+            tipo = 6;
+            asignaPosicion();
+            rectanguloRedondeado(_x, _y, 120, 25, 5, "FIN")
+            colocarFlecha(_x, _y, ancho);
+        }
+    </script>
+    <script src="js/dibujos.js"></script>
+</head>
+<link rel="stylesheet" href="./css/estilos.css">
+
+<body>
+    <div style="color:aliceblue">EDITOR DE DIAGRAMAS DE FLUJO -  RIVERA SANCHEZ PABLO - 2020630455 <hr></div>
+    <div class="contenedor">
+        <div class="panel">
+            <table class="botones">
+                <tr>
+                    <td class="titulo-seccion-panel">
+                        Símbolos
+                    </td>
+                    <td>
+                        <input type="button" value="Inicio" class="boton-simbolo"
+                            style="background-image: url('./imagen/simbolos/inicio.png') ;" onclick="inicio()">
+                    </td>
+                    <td>
+                        <input type="button" value="Variable" class="boton-simbolo"
+                            style="background-image: url('./imagen/simbolos/variable.png');"
+                            onclick="definirVariable()">
+                    </td>
+                    <td>
+                        <input type="button" value="Condición" class="boton-simbolo"
+                            style="background-image: url('./imagen/simbolos/condicion.png');"
+                            onclick="definirCondicion()">
+                    </td>
+                    <td>
+                        <input type="button" value="Instrucción" class="boton-simbolo"
+                            style="background-image: url('./imagen/simbolos/instruccion.png');"
+                            onclick="definirInstruccion()">
+
+                    </td>
+                    <td>
+                        <input type="button" value="Entrada" class="boton-simbolo"
+                            style="background-image: url('./imagen/simbolos/entrada.png');" onclick="definirEntrada()">
+                    </td>
+                    <td>
+                        <input type="button" value="Salida" class="boton-simbolo"
+                            style="background-image: url('./imagen/simbolos/salida.png');" onclick="definirSalida()">
+                    </td>
+                    <td>
+                        <input type="button" value="Fin" class="boton-simbolo"
+                            style="background-image: url('./imagen/simbolos/fin.png') ;" onclick="fin()">
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="8" style="height: 1px;">
+                        <hr>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="titulo-seccion-panel">
+                        Herramientas
+                    </td>
+                    <td>
+                        <input type="button" value="" class="boton-simbolo"
+                            style="background-image: url('./imagen/herramientas/disquete.png');">
+                    </td>
+                    <td>
+                        <input type="button" value="" class="boton-simbolo"
+                            style="background-image: url('./imagen/herramientas/subir.png');">
+                    </td>
+                    <td>
+                        <input type="button" value="Seleccion" class="boton-simbolo"
+                            style="background-image: url('./imagen/herramientas/seleccionar.png');">
+                    </td>
+                    <td>
+                        <input type="button" value="Editar" class="boton-simbolo"
+                            style="background-image: url('./imagen/herramientas/editar.png');">
+                    </td>
+                    <td>
+                        <input type="button" value="Eliminar" class="boton-simbolo"
+                            style="background-image: url('./imagen/herramientas/eliminar.png');">
+                    </td>
+                    <td>
+                        <input type="button" value="Bordes" class="boton-simbolo"
+                            style="background-image: url('./imagen/herramientas/borde.png');" onclick="cambiarBorde()">
+                    </td>
+                    <td>
+                        <input type="button" value="Relleno" class="boton-simbolo"
+                            style="background-image: url('./imagen/herramientas/relleno.png');"
+                            onclick="cambiarFondo()">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br>
+        <div class="espacio">
+            <div class="lienzo"><br>
+                <div class="titulo-seccion">Diagrama de Flujo</div>
+                <canvas id="lienzo_diagramaC1" width="850" height="1400"
+                    style="position: absolute; background-color: transparent;">
+                </canvas>
+                <canvas id="lienzo_diagramaC2" width="850" height="2400"
+                    style="position: absolute; background-color: transparent;">
+                </canvas>
+
+            </div>
+            <div class="codigo"> <br>
+                <div class="titulo-seccion">Generación de código</div>
+                <code>
+                    <div id="l1"></div>
+                    <div id="l2"></div>
+                    <div id="l3"></div>
+
+                    <div id="1"></div>
+                    <div id="2"></div>
+                    <div id="3"></div>
+                    <div id="4"></div>
+                    <div id="5"></div>
+                    <div id="6"></div>
+                    <div id="7"></div>
+                    <div id="8"></div>
+                    <div id="9"></div>
+                    <div id="10"></div>
+                    <div id="11"></div>
+                    <div id="12"></div>
+                    <div id="13"></div>
+                    <div id="14"></div>
+                    <div id="15"></div>
+                    <div id="16"></div>
+
+                    <div id="l4"></div>
+                    <div id="l5"></div>
+                </code>
+            </div>
+        </div><br>
+        <div class="opciones">
+            <br>
+            <input class="boton-opcion" type="button" value="Exportar como imagen" id="exportar"> &nbsp;
+            <input class="boton-opcion" type="button" value="Exportar como XML">&nbsp;
+            <input class="boton-opcion" type="button" value="Exportar código C"> <br>
+        </div>
+    </div>
+
+</body>
+
+</html>

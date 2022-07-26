@@ -1,0 +1,99 @@
+* {
+ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ 
+}
+body{
+    background-image: linear-gradient( 359.8deg, rgba(16,65,170,0.63) 57.9%, rgba(40,121,211,1) 72.6% );
+}
+
+.contenedor{
+    background-image: linear-gradient( 359.8deg, rgba(16,65,170,0.63) 57.9%, rgba(40,121,211,1) 72.6% );
+    width: 99% ;
+}
+
+.panel{
+    color: rgb(33, 33, 89);
+    width: 99%;
+}
+
+.botones{
+    background-image: linear-gradient( 359.8deg, rgba(16,65,170,0.63) 57.9%, rgba(40,121,211,1) 72.6% );
+    width: 99%;
+    margin-left: auto;
+    margin-right: auto;
+    
+
+}
+
+.titulo-seccion{
+    font-size: larger;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    font-weight: bold;
+    color: cadetblue;
+}
+
+.titulo-seccion-panel {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    font-weight: bold;
+    
+
+}
+
+td{
+    height: 25px;
+    width: auto;
+    padding-top: 0%;
+    padding-bottom: 0%;
+
+}
+.boton-simbolo{
+    background-size: contain ;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 45px;
+    width: 80px;
+    border: none;
+    background-color: none;
+}
+.boton-simbolo:hover{
+
+    z-index: 1;
+    border-color: brown;
+    cursor: pointer;
+    opacity: 80%;
+    color: rgb(122, 12, 12);
+    background-color: blueviolet;
+}
+.lienzo{
+    border-radius: 1em;
+    border: 1px solid gray;
+    width: 64%;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+    float: left;
+    position: relative;
+    
+}
+.lienzo_diagrama{
+    width: 1200px; height: 100%;
+}
+.codigo{
+    border-radius: 1em;
+    border: 1px solid gray;
+    width: 34%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+    padding-left: 10px;
+    scroll-behavior: auto;
+    float: right;
+    height: 600px;
+}
+
+.opciones{
+    text-align: center;
+}
